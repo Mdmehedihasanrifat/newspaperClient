@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import News from './components/News/News.tsx'
 import DetailsNews from './components/Details/DetailsNews.tsx'
+import Login from './components/Login/Login.tsx'
 
 const router = createBrowserRouter([
   {
@@ -23,8 +24,12 @@ const router = createBrowserRouter([
       element:<DetailsNews/>,
       loader:async ({ params }) => {
         return fetch(`http://localhost:3000/api/news/${params.id}`);
+    }},
+    {
+      path:"/login",
+      element:<Login/>
     }
-  }
+  
   ]
   },
 ]);
