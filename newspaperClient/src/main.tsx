@@ -1,13 +1,40 @@
-import { StrictMode } from 'react'
+import {  StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { UserContextProvider } from './context/UserContext.tsx'
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+import News from './components/News/News.tsx'
+import DetailsNews from './components/Details/DetailsNews.tsx'
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App/>,
+    children:[{
+      path:"/",
+      element:<News></News>
+    },
+    {
+      path:"news/:id",
+      element:<DetailsNews/>,
+      loader:async ({ params }) => {
+        return fetch(`http://localhost:3000/api/news/${params.id}`);
+    }
+  }
+  ]
+  },
+]);
+
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <UserContextProvider>
-    <App />
+    <RouterProvider router={router}>
+    </RouterProvider>
     </UserContextProvider>
   </StrictMode>,
 )
