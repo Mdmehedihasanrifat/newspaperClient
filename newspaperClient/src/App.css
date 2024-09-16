@@ -1,0 +1,46 @@
+body {
+  background-color: #f8f9fa; /* Light background for contrast */
+  font-family: 'Roboto', sans-serif; /* Elegant and modern font */
+}
+
+.navbar {
+  background-color: #007bff; /* Elegant blue color */
+  color: rgb(3, 3, 3);
+}
+
+.card {
+  border: 1px solid #dee2e6;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px); /* Slight hover effect */
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow on hover */
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #343a40;
+}
+
+.btn-transparent {
+  background-color: #007bff; /* Button matching navbar */
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.btn-transparent:hover {
+  background-color: #0056b3; /* Darker on hover */
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  -webkit-line-clamp: 2; /* Limit to 2 lines */
+}
+
+figure img {
+  border-bottom: 2px solid #007bff; /* Add a subtle border under images */
+}
