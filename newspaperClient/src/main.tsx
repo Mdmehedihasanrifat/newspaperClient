@@ -10,6 +10,7 @@ import {
 import News from './components/News/News.tsx'
 import DetailsNews from './components/Details/DetailsNews.tsx'
 import Login from './components/Login/Login.tsx'
+import NewsCreateForm from './components/News/NewsCreateForm.tsx'
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
     {
       path:"/login",
       element:<Login/>
+    },
+    {
+      path:"/newscreate",
+      element:<NewsCreateForm/>
     }
   
   ]
