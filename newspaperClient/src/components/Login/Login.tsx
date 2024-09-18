@@ -5,7 +5,8 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const { setUser }= useContext(userContext);  // Get setUser from the context
+    const context= useContext(userContext);
+    const {user,setUser}=context;  // Get setUser from the context
 
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -23,7 +24,10 @@ const Login = () => {
             const data = await response.json();
             if (response.ok) {
                 localStorage.setItem('token', data.access_token);
-                setUser({ name: data.user.name, email: data.user.email });  // Update user context
+                localStorage.setItem('user', JSON.stringify(data.user));
+               
+                setUser({id:data.user.id, name: data.user.name, email: data.user.email });
+               // Update user context
                 alert('Login successful');
                 setEmail('');  // Clear the email field
                 setPassword('');  // Clear the password field

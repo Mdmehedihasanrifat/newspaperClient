@@ -2,46 +2,64 @@ import React, { useState } from 'react';
 
 const NewsCreateForm = () => {
   const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [categories, setCategories] = useState([]);
+  const [description, setDescription] = useState('');
+  const [categoryIds, SetcategoryIds] = useState([]);
   const [image, setImage] = useState(null);
   const [errors, setErrors] = useState({});
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    // Frontend validation
-    const formErrors = {};
-    if (!title) formErrors.title = 'Title is required';
-    if (!content) formErrors.content = 'Content is required';
-    if (!image) formErrors.image = 'Image is required';
-    setErrors(formErrors);
-
-    if (Object.keys(formErrors).length > 0) return;
-
-    // Create form data for submission
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('content', content);
-    formData.append('categories', categories.join(','));  // Join categories array into a comma-separated string
-    formData.append('image', image);
-
-    try {
-      // Example: Replace with your actual API call for news creation
-      const response = await fetch('/api/news', {
-        method: 'POST',
-        body: formData,
-      });
-      const result = await response.json();
-      if (response.ok) {
-        alert('News created successfully!');
-      } else {
-        alert('Failed to create news: ' + result.message);
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+    
+      // Frontend validation
+      const formErrors = {};
+      if (!title) formErrors.title = 'Title is required';
+      if (!description) formErrors.description = 'Content is required';
+      if (!image) formErrors.image = 'Image is required';
+      setErrors(formErrors);
+    
+      if (Object.keys(formErrors).length > 0) return;
+    
+      // Create form data for submission
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('categoryIds', categoryIds.join(',')); // Join selected categories into a comma-separated string
+      formData.append('image', image);
+    
+      try {
+        // Get token from localStorage
+        const token = localStorage.getItem('token'); // Replace 'authToken' with the actual key you used to store the token
+    
+        if (!token) {
+          alert('User is not authenticated');
+          return;
+        }
+    
+        // Update API call to point to your local API and include the authorization token
+        const response = await fetch('http://localhost:3000/api/news', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Authorization': `${token}`, // Add the token to the Authorization header
+          },
+        });
+    
+        const result = await response.json();
+        if (response.ok) {
+          setTitle('');
+          setDescription('');
+          SetcategoryIds([]);
+          setImage(null)
+          alert('News created successfully!');
+        } else {
+          alert('Failed to create news: ' + result.message);
+        }
+      } catch (error) {
+        alert('An error occurred: ' + error.message);
       }
-    } catch (error) {
-      alert('An error occurred: ' + error.message);
-    }
-  };
+    };
+    
 
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
@@ -52,7 +70,7 @@ const NewsCreateForm = () => {
       e.target.selectedOptions,
       (option) => option.value
     );
-    setCategories(value);
+    SetcategoryIds(value);
   };
 
   return (
@@ -80,18 +98,18 @@ const NewsCreateForm = () => {
             </div>
 
             <div className="form-control">
-              <label className="label" htmlFor="content">
-                <span className="label-text">Content</span>
+              <label className="label" htmlFor="description">
+                <span className="label-text">Description</span>
               </label>
               <textarea
-                id="content"
+                id="description"
                 placeholder="Enter news content"
                 className="textarea textarea-bordered"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 required
               />
-              {errors.content && <p className="text-red-500 text-sm">{errors.content}</p>}
+              {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
             </div>
 
             <div className="form-control">
@@ -104,10 +122,10 @@ const NewsCreateForm = () => {
                 multiple
                 onChange={handleCategoryChange}
               >
-                <option value="Politics">Politics</option>
-                <option value="Sports">Sports</option>
-                <option value="Technology">Technology</option>
-                <option value="Entertainment">Entertainment</option>
+                <option value="1">Politics</option>
+                <option value="2">Sports</option>
+                <option value="3">Technology</option>
+                <option value="4">Entertainment</option>
               </select>
             </div>
 
@@ -137,5 +155,6 @@ const NewsCreateForm = () => {
     </div>
   );
 };
+
 
 export default NewsCreateForm;

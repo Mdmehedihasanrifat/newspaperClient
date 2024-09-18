@@ -11,6 +11,7 @@ import News from './components/News/News.tsx'
 import DetailsNews from './components/Details/DetailsNews.tsx'
 import Login from './components/Login/Login.tsx'
 import NewsCreateForm from './components/News/NewsCreateForm.tsx'
+import PrivateRoute from './components/PrivateRoute/PrivateRoute.tsx'
 
 const router = createBrowserRouter([
   {
@@ -31,10 +32,12 @@ const router = createBrowserRouter([
       element:<Login/>
     },
     {
-      path:"/newscreate",
-      element:<NewsCreateForm/>
-    }
-  
+      path: "/newscreate",
+      element: (
+        <PrivateRoute>
+          <NewsCreateForm />
+        </PrivateRoute>
+      ),}
   ]
   },
 ]);

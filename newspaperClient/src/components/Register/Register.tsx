@@ -1,5 +1,5 @@
-import React, { useContext, useState } from 'react';
-import userContext from '../../context/UserContext';
+import React, { useState } from 'react';
+
 
 const Register = () => {
     const [email, setEmail] = useState('');
@@ -8,8 +8,7 @@ const Register = () => {
 
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const { setUser } = useContext(userContext);  // Get setUser from the context
-
+  
     const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setError('');  // Clear any previous errors
@@ -25,16 +24,14 @@ const Register = () => {
 
             const data = await response.json();
             if (response.ok) {
-                localStorage.setItem('token', data.access_token);
-                setUser({ name: data.user.name, email: data.user.email });  // Update user context
                 alert('Register successful');
                 setEmail('');  // Clear the email field
                 setPassword('');  // Clear the password field
             } else {
                 setError(data.message || 'Register failed');
             }
-        } catch (err) {
-            setError('An error occurred. Please try again.');
+        } catch (err ) {
+            setError(`An error occurred. Please try again.${err}`);
         }
     }
 

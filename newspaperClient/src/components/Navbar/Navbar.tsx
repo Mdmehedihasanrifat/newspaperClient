@@ -1,20 +1,82 @@
-import React, { useContext } from "react";
+import { useContext, useEffect, useState, ChangeEvent } from "react";
 import { FaSearch } from "react-icons/fa";
 import userContext from "../../context/UserContext";
-const Navbar = () => {
+import { Link, useNavigate } from "react-router-dom";
+import logo from "../../assets/download (1).png";
 
-  const {user,setUser}=useContext(userContext);
+interface User {
+  name: string;
+  email: string;
+}
+
+interface UserContextType {
+  user: User | null;
+  setUser: (user: User | null) => void;
+}
+
+const Navbar = () => {
+  const context = useContext(userContext);
+  const { user, setUser } = context as UserContextType;
+  const [showSearch, setShowSearch] = useState(false); // State to toggle the search bar
+  const [searchQuery, setSearchQuery] = useState(""); // State to manage search input
+  const [searchResults, setSearchResults] = useState<any[]>([]); // State to store search results
+
+  useEffect(() => {
+    const localUser = localStorage.getItem("user");
+    if (localUser) {
+      setUser(JSON.parse(localUser));
+    } else {
+      setUser(null);
+    }
+  }, [setUser]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+  };
+
+  const navigate = useNavigate();
+
+  const getCurrentDate = () => {
+    const date = new Date();
+    return date.toDateString(); // Returns a formatted string like 'Mon Sep 18 2024'
+  };
+
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const performSearch = async () => {
+    if (searchQuery.trim() === "") return;
+  
+    try {
+      const response = await fetch(`http://localhost:3000/api/news/news/search?query=${searchQuery}`);
+      const data = await response.json();
+      setSearchResults(data.news || []);
+    } catch (error) {
+      console.error('Error searching news:', error);
+    }
+  };
+  
+
+  useEffect(() => {
+    if (searchQuery.length > 2) {
+      // Perform search after user types at least 3 characters
+      performSearch();
+    } else {
+      setSearchResults([]); // Clear results if search query is too short
+    }
+  }, [searchQuery]);
 
   return (
-    <div>
+    <div className="navbar-container">
+      {/* First Section: Date, Logo, Hamburger, and User */}
       <div className="navbar bg-base-100">
         <div className="navbar-start">
+          {/* Hamburger Menu */}
           <div className="dropdown">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost btn-circle"
-            >
+            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -22,69 +84,111 @@ const Navbar = () => {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h7"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
               </svg>
             </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
-            >
+            <ul tabIndex={0} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
               <li>
-                <a>Home</a>
+                <Link to="/">Home</Link>
               </li>
               <li>
-                <a>News</a>
+                <Link to="/newscreate">News Create</Link>
               </li>
               <li>
-                <a>Opinion</a>
+                <Link to="/login">Login</Link>
               </li>
             </ul>
           </div>
+          {/* Current Date */}
+          <div className="ml-4">
+            <p>{getCurrentDate()}</p>
+          </div>
         </div>
         <div className="navbar-center">
-          <a className="btn btn-ghost text-xl">The Truth Seeker</a>
+          {/* Logo */}
+          <img src={logo} className="h-24 w-24" alt="Logo" />
         </div>
         <div className="navbar-end">
-          <div className="form-control flex justify-center items-center">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search"
-                className="input input-bordered w-24 md:w-auto pr-10"
-              />
-              <FaSearch className="absolute top-1/2 right-2 transform -translate-y-1/2 text-gray-500" />
-            </div>
-          </div>
-
           <div className="dropdown dropdown-end">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost btn-square mx-2"
-            >
-              <div className="w-12 ">
-                {user?<h2>{user.name}</h2>:<h2>Guest</h2>}
+            <div tabIndex={0} role="button" className="btn btn-ghost btn-square mx-2">
+              <div className="w-12">
+                {user ? <h2>{user.name}</h2> : <h2>Guest</h2>}
               </div>
             </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
-            >
+            <ul tabIndex={0} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
               <li>
-                <a>Settings</a>
-              </li>
-              <li>
-                <a>Logout</a>
+                {user ? (
+                  <button onClick={handleLogout} className="btn btn-ghost w-full text-left">
+                    Logout
+                  </button>
+                ) : (
+                  <button onClick={() => navigate("/login")} className="btn btn-ghost w-full text-left">
+                    Login
+                  </button>
+                )}
               </li>
             </ul>
           </div>
         </div>
       </div>
+
+      {/* Second Section: Links and Search Icon */}
+      <div className="navbar bg-base-100 w-full font-extrabold -mt-8">
+        <div className="flex justify-between items-center w-full">
+          {/* Center Links */}
+          <div className="flex-grow text-center ">
+            <Link to="/" className="text-md mx-4 hover:text-orange-600">
+              Home
+            </Link>
+            <Link to="/sports" className="text-md mx-4 hover:text-orange-600">
+              Sports
+            </Link>
+            <Link to="/politics" className="text-md mx-4 hover:text-orange-600">
+              Politics
+            </Link>
+          </div>
+
+          {/* Extreme Right-Aligned Search Icon */}
+          <div className="flex-shrink-0">
+            <button className="btn btn-ghost btn-circle" onClick={() => setShowSearch(!showSearch)}>
+              <FaSearch />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Third Section: Search Bar and Results */}
+      {showSearch && (
+        <div className="navbar bg-base-100 p-4 border-t border-gray-200">
+          <div className="w-full flex flex-col items-center">
+            <input
+              type="text"
+              placeholder="Search"
+              className="input input-bordered w-full max-w-lg mb-4"
+              autoFocus
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+            {/* Display search results */}
+            {searchResults?.length > 0 && (
+              <div className="w-full max-w-lg mt-4">
+                <ul>
+                  {searchResults.map((result) => (
+                    <li key={result.id} className="mb-2">
+                      <Link to={`/news/${result.id}`} className="text-blue-500 hover:underline">
+                        {result.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {searchQuery?.length > 2 && searchResults.length === 0 && (
+              <p>No results found</p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
