@@ -1,12 +1,19 @@
 import React, { useContext, useState } from 'react';
+import Swal from 'sweetalert2';
+import { useNavigate, useLocation } from 'react-router-dom'; // Import hooks from React Router
 import userContext from '../../context/UserContext';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const context= useContext(userContext);
-    const {user,setUser}=context;  // Get setUser from the context
+    const context = useContext(userContext);
+    const { setUser } = context;  // Get setUser from the context
+    const navigate = useNavigate(); // Initialize useNavigate hook
+    const location = useLocation(); // Get the current location
+
+    // Get the URL the user was trying to access before login (default to "/")
+    const from = location.state?.from?.pathname || '/';
 
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -26,18 +33,30 @@ const Login = () => {
                 localStorage.setItem('token', data.access_token);
                 localStorage.setItem('user', JSON.stringify(data.user));
                
-                setUser({id:data.user.id, name: data.user.name, email: data.user.email });
-               // Update user context
-                alert('Login successful');
-                setEmail('');  // Clear the email field
-                setPassword('');  // Clear the password field
+                setUser({ id: data.user.id, name: data.user.name, email: data.user.email });
+                
+                // Show SweetAlert2 success message
+                Swal.fire({
+                    title: 'Login Successful',
+                    text: 'You have logged in successfully!',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#3085d6',
+                }).then(() => {
+                    // Redirect the user back to the page they were trying to access
+                    navigate(from, { replace: true });
+                });
+
+                // Clear form fields
+                setEmail('');
+                setPassword('');
             } else {
                 setError(data.message || 'Login failed');
             }
         } catch (err) {
             setError('An error occurred. Please try again.');
         }
-    }
+    };
 
     return (
         <div className="hero bg-base-200 min-h-screen">

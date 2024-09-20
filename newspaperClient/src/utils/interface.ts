@@ -4,6 +4,11 @@ export interface Author {
     name: string;
     profile: string;
   }
+  export interface User {
+    id: number;
+    name: string;
+    profile: string;
+  }
   
   export interface Category {
     id: number;

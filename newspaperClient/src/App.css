@@ -44,3 +44,21 @@ body {
 figure img {
   border-bottom: 2px solid #007bff; /* Add a subtle border under images */
 }
+
+
+.small-alert {
+/* Adjust padding to reduce height */
+  max-width: 30vw;
+  height: 45vh;
+ 
+  
+  /* Adjust width to your desired size */
+}
+
+.small-alert .swal2-title {
+  font-size: 1.25rem; /* Reduce title font size */
+}
+
+.small-alert .swal2-content {
+  font-size: 1rem; /* Adjust the text size if necessary */
+}

@@ -1,36 +1,29 @@
-
-// PrivateRoute.tsx
-import { useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import userContext from "../../context/UserContext";
-interface User {
-    name: string;
-    email: string;
-}
-interface UserContextType {
-    user: User | null;
-    setUser: (user: User | null) => void;
-}
+
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
-  const context = useContext(userContext);
-  const { user, setUser } = context as UserContextType;
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true); // Add loading state
+
   useEffect(() => {
     const localUser = localStorage.getItem("user");
     if (localUser) {
       setUser(JSON.parse(localUser));
-    } else {
-      setUser(null); // Or handle the case where no user is found
     }
-  }, [setUser]);
+    setLoading(false); // Set loading to false after checking localStorage
+  }, []); 
 
-  
-  // If user doesn't exist, redirect to login
+  if (loading) {
+    // Return null or a loading spinner while checking user status
+    return null;
+  }
+
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  // If user is authenticated, render the requested component
   return children;
 };
 
 export default PrivateRoute;
+
