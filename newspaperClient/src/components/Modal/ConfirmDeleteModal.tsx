@@ -1,4 +1,4 @@
-export const ConfirmDeleteModal: React.FC<{
+ const ConfirmDeleteModal: React.FC<{
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
@@ -22,3 +22,5 @@ export const ConfirmDeleteModal: React.FC<{
     </div>
   );
 };
+
+export default ConfirmDeleteModal

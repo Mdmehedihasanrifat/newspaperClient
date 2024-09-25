@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useLoaderData, useNavigate, useLocation } from "react-router-dom";
+import {  useNavigate, useLocation, useLoaderData } from "react-router-dom";
 import { getImageUrl } from "../utils/helper";
-import { useContext, useEffect, useState } from "react";
-import userContext from "../context/UserContext";
+import { useEffect, useState } from "react";
+// import userContext from "../context/UserContext";
 
 const CreatedNews = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [categoryName, setCategoryName] = useState<string | null>(null);
-  const { categories, news } = useLoaderData(); // Destructure news from loader
-  const { setCategories } = useContext(userContext);
+   const { news } = useLoaderData(); // Destructure news from loader
+  // const { setCategories } = useContext(userContext);
 
-  // Set the categories in context
-  useEffect(() => {
-    setCategories(categories);
-  }, [categories, setCategories]);
+  // // Set the categories in context
+  // useEffect(() => {
+  //   setCategories(categories);
+  // }, [categories, setCategories]);
 
 
   // Extract category from the URL query parameters
@@ -47,8 +47,8 @@ const CreatedNews = () => {
               className="w-full h-48 object-cover"
             />
             <div className="p-4">
-              <h2 className="text-xl font-semibold mb-2">{item.headline}</h2>
-              <p className="text-gray-600 text-sm">{item.details}</p>
+              <h2 className="text-xl font-semibold mb-2">{item.title}</h2>
+              <p className="text-gray-600 text-sm">{item.description}</p>
             </div>
           </div>
         ))}

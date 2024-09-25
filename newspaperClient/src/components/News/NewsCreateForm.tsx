@@ -1,7 +1,7 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, } from "react";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import userContext from "../../context/UserContext";
+
 
 const NewsCreateForm = () => {
   const { newsId } = useParams<{ newsId: string }>();
@@ -11,7 +11,7 @@ const NewsCreateForm = () => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const { categories, setCategories } = useContext(userContext); // Categories context
+  const [categories, setCategories ] = useState([]); // Categories context
   const navigate = useNavigate();
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const detailNews = useLoaderData(); // Data from news details
@@ -20,20 +20,29 @@ const NewsCreateForm = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/news"); // Adjust the URL
+        const response = await fetch("http://localhost:3000/api/categories"); // Adjust the URL
         const data = await response.json();
-        setCategories(data.categories);
+        
+      // Log the data from the API
+        
+        if (response.ok) {
+          setCategories(data); // Only set categories if the response is OK
+        } else {
+          throw new Error(data.message || "Failed to load categories");
+        }
       } catch (error) {
         Swal.fire({
           icon: "error",
           title: "Error",
-          text: "Failed to load categories!",
+          text: error.message,
         });
       }
     };
 
     fetchCategories();
   }, []);
+
+  console.log(categories);
 
   // Pre-fill form data if updating an existing news
   useEffect(() => {

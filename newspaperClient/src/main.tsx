@@ -1,4 +1,4 @@
-import {  StrictMode } from 'react'
+import {  StrictMode, useContext } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
@@ -14,7 +14,8 @@ import NewsCreateForm from './components/News/NewsCreateForm.tsx'
 import PrivateRoute from './components/PrivateRoute/PrivateRoute.tsx'
 import CreatedNews from './CreatedNews/CreatedNews.tsx'
 
-let user=JSON.parse(localStorage.getItem("user")) ;
+const user=JSON.parse(localStorage.getItem("user")) ;
+
 const router = createBrowserRouter([
   {
     path: "/",

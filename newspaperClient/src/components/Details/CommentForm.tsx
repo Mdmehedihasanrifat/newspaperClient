@@ -12,7 +12,7 @@ export const CommentForm: React.FC<{
       onChange={(e) => setNewComment(e.target.value)}
       rows={3}
       placeholder="Add or edit a comment..."
-      className="w-full p-2 border border-gray-300 rounded"
+      className="w-full border border-gray-300 rounded"
       required
     />
     <div className="flex gap-2 mt-2">

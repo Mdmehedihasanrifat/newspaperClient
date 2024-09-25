@@ -5,7 +5,7 @@ import { handleFetch } from "../../utils/helper";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CommentForm } from "./CommentForm";
-import { ConfirmDeleteModal } from "../Modal/ConfirmDeleteModal";
+import ConfirmDeleteModal from "../Modal/ConfirmDeleteModal";
 import { LoginModal } from "../Modal/LoginModal";
 import { useNavigate } from "react-router-dom";
 import userContext from "../../context/UserContext";
@@ -28,7 +28,8 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState<number | null>(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const { user } = useContext(userContext);
+  const context= useContext(userContext);
+  const user=context?.user;
   const navigate = useNavigate();
 
   useEffect(() => {

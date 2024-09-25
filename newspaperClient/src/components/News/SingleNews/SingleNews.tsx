@@ -39,13 +39,13 @@ const SingleNews: React.FC<{ news: NewsItem; image: string; featured?: boolean; 
       </div>
       <div className="pt-4">
         <h1 className={`mb-2 ${featured ? "text-4xl" : mediumFeature ? "text-2xl" : "text-xl"} text-indigo-500`}>
-          {news.headline}
+          {news.title}
         </h1>
         <p className="text-xs text-gray-500 mb-2 text-red-700">
           {news.userId} {new Date(news.createdAt).toLocaleDateString()}
         </p>
         <p className={`text-gray-700 mb-4 ${featured ? "line-clamp-4" : mediumFeature ? "line-clamp-3" : "line-clamp-2"}`}>
-          {news.details}
+          {news.description}
         </p>
        
       </div>
