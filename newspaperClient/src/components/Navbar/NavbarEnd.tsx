@@ -15,7 +15,7 @@ const NavbarEnd = ({ user, handleLogout }: NavbarEndProps) => {
 
   return (
     <div className="navbar-end">
-      <div className="dropdown dropdown-end">
+      <div className="dropdown dropdown-end ">
         <div tabIndex={0} role="button" className="btn btn-ghost btn-square mx-2">
           <div className="w-12">{user ? <h2>{user.name}</h2> : <h2>Guest</h2>}</div>
         </div>

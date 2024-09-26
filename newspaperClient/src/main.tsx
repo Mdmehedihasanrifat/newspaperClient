@@ -13,6 +13,7 @@ import Login from './components/Login/Login.tsx'
 import NewsCreateForm from './components/News/NewsCreateForm.tsx'
 import PrivateRoute from './components/PrivateRoute/PrivateRoute.tsx'
 import CreatedNews from './CreatedNews/CreatedNews.tsx'
+import Register from './components/Register/Register.tsx'
 
 const user=JSON.parse(localStorage.getItem("user")) ;
 
@@ -40,7 +41,10 @@ const router = createBrowserRouter([
         <PrivateRoute>
           <NewsCreateForm />
         </PrivateRoute>
-      ),}
+      ),},
+      {
+        path: "/register",
+        element: <Register></Register>}
 
       ,{
 

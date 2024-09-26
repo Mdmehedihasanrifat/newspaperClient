@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import Swal from 'sweetalert2';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import userContext from '../../context/UserContext';
 import login from "../../assets/bwink_bld_03_single_03.jpg";
 
@@ -55,14 +55,14 @@ const Login = () => {
 
     return (
         <div className="hero bg-gradient-to-r from-grey-200 to-grey-00 min-h-screen">
-            <div className="hero-content flex-col lg:flex-row-reverse h-full">
+            <div className="hero-content flex flex-col lg:flex-row-reverse w-full lg:h-[80vh] lg:justify-center">
                 {/* Image div */}
-                <div className="hidden lg:flex w-1/2 h-1/2">
-                    <img src={login} alt="Login" className="rounded-lg shadow-lg object-cover h-full" />
+                <div className="lg:w-1/2 w-full flex h-full">
+                    <img src={login} alt="Login" className="rounded-lg shadow-lg object-cover h-full w-full" />
                 </div>
                 {/* Card div */}
-                <div className="card bg-white shadow-lg w-full max-w-sm p-6 rounded-lg h-1/2 flex flex-col justify-center">
-                    <h1 className="text-4xl font-bold text-center mb-6 text-black">Login Here!</h1>
+                <div className="card bg-white shadow-lg w-full lg:w-1/2 h-full rounded-lg flex flex-col justify-center p-4">
+                    <h1 className="text-4xl font-bold text-center text-black">Login Here!</h1>
                     <form className="card-body" onSubmit={handleLogin}>
                         <div className="form-control mb-4">
                             <label className="label">
@@ -90,7 +90,7 @@ const Login = () => {
                                 required
                             />
                             <label className="label">
-                                <a href="#" className="label-text-alt link link-hover text-blue-500">Forgot password?</a>
+                                <Link to="/register" className="label-text-alt link link-hover text-blue-500">Don't have account register here</Link>
                             </label>
                         </div>
                         {error && <p className="text-red-500 text-center mb-4">{error}</p>}

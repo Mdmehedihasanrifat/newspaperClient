@@ -1,5 +1,6 @@
-import { ChangeEvent, useEffect, useCallback } from "react";
+import { ChangeEvent, useEffect, useCallback, useContext } from "react";
 import { Link } from "react-router-dom";
+import userContext from "../../context/UserContext";
 
 interface SearchBarProps {
   searchQuery: string;
@@ -14,8 +15,11 @@ const SearchBar = ({
   searchResults,
   setSearchResults,
 }: SearchBarProps) => {
+
+  const {Query,setQuery}=useContext(userContext)
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
+    setQuery(event.target.value)
   };
 
   const performSearch = useCallback(async () => {
@@ -54,6 +58,8 @@ const SearchBar = ({
   // Determine if results should be displayed
   const showResults = searchResults.length > 0;
 
+
+
   return (
     <div className="navbar bg-base-100 p-4 border-t border-gray-200">
       <div className="w-full flex flex-col items-center">
@@ -69,23 +75,23 @@ const SearchBar = ({
         {searchQuery.length > 0 && showResults && (
           <div className="w-full max-w-lg mt-4 relative">
             <ul className="absolute z-10 w-full bg-white shadow-lg rounded-md p-2 max-h-48 overflow-y-auto">
-              {/* Display only the first 6 results */}
-              {searchResults.slice(0, 6).map((result) => (
-                <li key={result.id} className="flex items-center mb-2">
-                  <img
-                    src={result.image}
-                    alt={result.title}
-                    className="w-16 h-16 object-cover rounded-md mr-2"
-                  />
-                  <Link
-                    to={`/news/${result.id}`}
-                    className="text-blue-500 hover:underline flex-1"
-                  >
-                    {result.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          {/* Display only the first 6 results */}
+          {searchResults.slice(0, 6).map((result) => (
+            <li key={result.id} className="flex items-center mb-2">
+              <img
+                src={result.image}
+                alt={result.headline}
+                className="w-16 h-16 object-cover rounded-md mr-2"
+              />
+              <Link
+                to={`/news/${result.id}`}
+                className="text-blue-500 hover:underline flex-1"
+              >
+                {result.headline} 
+              </Link>
+            </li>
+          ))}
+        </ul>
             {/* Show scrollable results for additional items */}
             {searchResults.length > 6 && (
               <ul className="absolute z-10 w-full bg-white shadow-lg rounded-md p-2 max-h-48 overflow-y-auto mt-2">
@@ -100,7 +106,7 @@ const SearchBar = ({
                       to={`/news/${result.id}`}
                       className="text-blue-500 hover:underline flex-1"
                     >
-                      {result.title}
+                      {result.headline}
                     </Link>
                   </li>
                 ))}

@@ -303,11 +303,11 @@ const Navbar = () => {
       <div className="navbar bg-base-100 w-full font-extrabold -mt-8 flex justify-between items-center">
       <NavbarLinks />
       <button
-        className="btn btn-ghost btn-circle"
-        onClick={() => setShowSearch(!showSearch)}
-      >
-        <FaSearch />
-      </button>
+  className="btn btn-ghost btn-circle w-8 h-8 mx-2 text-2xl"
+  onClick={() => setShowSearch(!showSearch)}
+>
+  <FaSearch />
+</button>
     </div>
 
 

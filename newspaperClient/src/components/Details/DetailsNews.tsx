@@ -8,6 +8,7 @@ import CommentsSection from "./CommentSection";
 import { FaTrashAlt, FaEdit } from "react-icons/fa";
 import ConfirmDeleteModal from "../Modal/ConfirmDeleteModal";
 import Swal from "sweetalert2";
+import { io } from "socket.io-client";
 
 const API_BASE_URL = "http://localhost:3000/api";
 
@@ -15,11 +16,14 @@ const DetailsNews: React.FC = () => {
   const detailsNews = useLoaderData() as NewsDetails;
   const { id } = useParams();
   const context = useContext(userContext);
-  const user =context?.user; // Handle potential undefined context
+  const user = context?.user; // Handle potential undefined context
+  const { setIsDeleted, setDeletedId } = context;
   const navigate = useNavigate();
   const [allComment, setAllComment] = useState<Comment[]>([]);
   const [isDeleteModal, setDeleteModal] = useState(false);
+  const [recommendations, setRecommendations] = useState<NewsDetails[]>([]); // State for recommendations
 
+  // Fetch comments
   const fetchComments = useCallback(async () => {
     if (!id) return;
     try {
@@ -34,6 +38,22 @@ const DetailsNews: React.FC = () => {
   useEffect(() => {
     fetchComments();
   }, [fetchComments]);
+
+  // Fetch recommendations
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      if (!id) return;
+      try {
+        const response = await fetch(`${API_BASE_URL}/news/${id}/recommend`);
+        const data = await response.json();
+        setRecommendations(data.recommendations);
+      } catch (error) {
+        console.error("Error fetching recommendations:", error);
+      }
+    };
+
+    fetchRecommendations();
+  }, [id]);
 
   const handleDelete = async (detailsNews: NewsDetails) => {
     if (user?.id !== detailsNews.author.id) {
@@ -52,7 +72,12 @@ const DetailsNews: React.FC = () => {
       }
 
       Swal.fire("Deleted!", "News has been deleted successfully.", "success");
-      navigate("/"); // Redirect after successful delete
+      const socket = io("http://localhost:3000");
+      socket.emit("newsDeleted", { newsId: detailsNews.id });
+
+      setIsDeleted(true);
+      setDeletedId(detailsNews.id);
+      navigate("/");
     } catch (error) {
       Swal.fire("Error", "Failed to delete news.", "error");
     }
@@ -68,7 +93,7 @@ const DetailsNews: React.FC = () => {
   return (
     <div className="grid grid-cols-12 gap-6">
       {/* Main Content Section */}
-      <div className="col-span-10">
+      <div className="col-span-8">
         {/* Headline */}
         <div className="text-left my-6">
           <h2 className="text-3xl font-bold text-gray-900">
@@ -120,10 +145,30 @@ const DetailsNews: React.FC = () => {
       </div>
 
       {/* Related News Section */}
-      <div className="col-span-2 mx-6">
+      <div className="col-span-4 mx-6">
         <div className="bg-gray-100 p-4 border border-gray-300 rounded shadow">
           <h2 className="text-lg font-bold">Related News</h2>
-          {/* Placeholder for related news items */}
+          <ul className="mt-2">
+            {recommendations.length > 0 ? (
+              recommendations.map((single) => (
+                <li key={single.id} className="flex items-center mb-2">
+                  <img
+                    src={single.image}
+                    alt={single.headline}
+                    className="w-16 h-16 mr-2 object-cover rounded"
+                  />
+                  <div>
+                    <h3 className="text-md font-semibold">{single.headline}</h3>
+                    <p className="text-sm text-gray-500">
+                      {formattedDate(single.createdAt)}
+                    </p>
+                  </div>
+                </li>
+              ))
+            ) : (
+              <p className="text-gray-500">No related news available.</p>
+            )}
+          </ul>
         </div>
       </div>
 
