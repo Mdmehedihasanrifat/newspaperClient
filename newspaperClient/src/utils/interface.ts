@@ -4,6 +4,11 @@ export interface Author {
     name: string;
     profile: string;
   }
+  export interface User {
+    id: number;
+    name: string;
+    profile: string;
+  }
   
   export interface Category {
     id: number;
@@ -11,6 +16,7 @@ export interface Author {
   }
   
   export interface NewsDetails {
+    createdAt: string;
     id: number;
     headline: string;
     details: string;
@@ -20,6 +26,7 @@ export interface Author {
   }
   
   export interface Comment {
+    userId: number;
     id: number;
     text: string;
     createdAt: string;
