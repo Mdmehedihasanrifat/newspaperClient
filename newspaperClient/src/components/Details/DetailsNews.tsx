@@ -5,11 +5,12 @@ import userContext from "../../context/UserContext";
 import { formattedDate, getImageUrl, handleFetch } from "../../utils/helper";
 import NewsImage from "./NewsImage";
 import CommentsSection from "./CommentSection";
-import { FaTrashAlt, FaEdit } from "react-icons/fa";
+import { FaTrashAlt, FaEdit,FaVolumeUp, FaBookReader} from "react-icons/fa";
 import ConfirmDeleteModal from "../Modal/ConfirmDeleteModal";
 import Swal from "sweetalert2";
 import { io } from "socket.io-client";
-
+import * as transformers from '@huggingface/transformers'
+import { HfInference } from '@huggingface/inference';
 const API_BASE_URL = "http://localhost:3000/api";
 
 const DetailsNews: React.FC = () => {
@@ -22,7 +23,8 @@ const DetailsNews: React.FC = () => {
   const [allComment, setAllComment] = useState<Comment[]>([]);
   const [isDeleteModal, setDeleteModal] = useState(false);
   const [recommendations, setRecommendations] = useState<NewsDetails[]>([]); // State for recommendations
-
+  const [isReadingAloud, setIsReadingAloud] = useState(false);
+  const [loading, setLoading] = useState(false);
   // Fetch comments
   const fetchComments = useCallback(async () => {
     if (!id) return;
@@ -94,6 +96,71 @@ const DetailsNews: React.FC = () => {
     navigate(`/news/${id}`);
   };
 
+
+
+  const handleReadAloud = () => {
+    
+    if (isReadingAloud) {
+            speechSynthesis.cancel();
+            setIsReadingAloud(false);
+          } else {
+            const utterance = new SpeechSynthesisUtterance();
+            utterance.text = `${detailsNews.headline}. ${detailsNews.details}. Written by ${detailsNews.author.name} on ${formattedDate(detailsNews.createdAt)}.`;
+            utterance.lang = "en-US";
+            utterance.onend = () => {
+              setIsReadingAloud(false);
+            };
+            speechSynthesis.speak(utterance);
+            setIsReadingAloud(true);
+          }
+
+  };
+
+  const loadSummarizationModel = async () => {
+    setLoading(true);
+    try {
+      // Make sure to use an environment variable for the API token
+      const hf = new HfInference("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");
+
+      console.log("Sending request to Hugging Face API...");
+      const summary = await hf.summarization({
+        model: 'facebook/bart-large-cnn',
+        inputs: detailsNews.details,
+        parameters: {
+          max_length: 150,
+          min_length: 40,
+          
+        }
+      });
+
+      console.log("Received summary:", summary);
+
+      if (summary && summary.summary_text) {
+        Swal.fire({
+          title: 'Summary',
+          text: summary.summary_text,
+          icon: 'info',
+          confirmButtonText: 'Close',
+          customClass: {
+            popup: 'swal-wide',
+          },
+        });
+      } else {
+        throw new Error("Summary text is undefined");
+      }
+    } catch (error) {
+      console.error("Error summarizing news:", error);
+      let errorMessage = "Something went wrong while generating the summary!";
+      if (error instanceof Error) {
+        errorMessage += ` Error: ${error.message}`;
+      }
+      Swal.fire("Error", errorMessage, "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   return (
     <div className="grid grid-cols-12 gap-6">
       {/* Main Content Section */}
@@ -121,9 +188,7 @@ const DetailsNews: React.FC = () => {
             {detailsNews.details}
           </p>
         </div>
-
-        {/* News Actions (Edit/Delete) */}
-        {user?.id === detailsNews.author.id && (
+{user?.id === detailsNews.author.id && (
           <div className="flex gap-4 mt-4 justify-start">
             <button
               onClick={() => navigate(`/news/${id}/edit`)}
@@ -139,8 +204,45 @@ const DetailsNews: React.FC = () => {
               <FaTrashAlt />
               Delete News
             </button>
+
+            <button
+            onClick={handleReadAloud}
+            className={`flex items-center gap-2 text-white ${
+              isReadingAloud ? "bg-yellow-500 hover:bg-yellow-600" : "bg-green-500 hover:bg-green-600"
+            } py-2 px-4 rounded`}
+          >
+            <FaVolumeUp />
+            {isReadingAloud ? "Stop Reading" : "Read Aloud"}
+          </button>
+
+          <button onClick={loadSummarizationModel} disabled={loading} className="btn btn-primary">
+            <FaBookReader></FaBookReader>
+           {loading ? "Generating Summary..." : "Get Summary"}
+           </button>
           </div>
         )}
+
+       {(user?.id !=detailsNews.author.id)&& (
+        <div className="flex justify-start">
+        <button
+            onClick={handleReadAloud}
+            className={`flex items-center gap-2 mr-4 text-white ${
+              isReadingAloud ? "bg-yellow-500 hover:bg-yellow-600" : "bg-green-500 hover:bg-green-600"
+            } py-2 px-4 rounded`}
+          >
+            <FaVolumeUp />
+            {isReadingAloud ? "Stop Reading" : "Read Aloud"}
+          </button>
+        
+          <button onClick={loadSummarizationModel} disabled={loading} className="btn btn-primary">
+          <FaBookReader></FaBookReader>
+         {loading ? "Generating Summary..." : "Get Summary"}
+         </button>
+         </div>
+        )
+      }
+
+        
 
         {/* Comments Section */}
         <div className="mt-8">
@@ -200,3 +302,4 @@ const DetailsNews: React.FC = () => {
 };
 
 export default DetailsNews;
+

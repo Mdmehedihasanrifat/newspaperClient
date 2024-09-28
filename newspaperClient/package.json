@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@huggingface/inference": "^2.8.0",
+    "@huggingface/transformers": "^3.0.0-alpha.17",
     "client": "^0.0.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^11.5.6",
