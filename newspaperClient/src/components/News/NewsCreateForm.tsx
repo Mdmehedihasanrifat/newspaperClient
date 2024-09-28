@@ -1,7 +1,8 @@
 import { useState, useEffect, } from "react";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const NewsCreateForm = () => {
   const { newsId } = useParams<{ newsId: string }>();
@@ -40,7 +41,7 @@ const NewsCreateForm = () => {
     };
 
     fetchCategories();
-  }, []);
+  }, [setCategories]);
 
   console.log(categories);
 
@@ -132,6 +133,8 @@ const NewsCreateForm = () => {
           title: "Success",
           text: newsId ? "News updated successfully!" : "News created successfully!",
         });
+
+        toast(newsId? "News updated successfully!" : "News created successfully!")
         navigate("/"); // Redirect after creating or updating
       } else {
         // Show error SweetAlert

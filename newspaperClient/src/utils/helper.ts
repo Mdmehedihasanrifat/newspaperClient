@@ -15,9 +15,11 @@ export const getImageUrl = (url: string): string => {
   };
 
  
-    const token = localStorage.getItem("token");
+ 
   
   export const handleFetch = async (url: string, method: string, bodyData?: any) => {
+    const token = localStorage.getItem("token");
+    console.log(token)
     const options: RequestInit = {
       method,
       headers: {

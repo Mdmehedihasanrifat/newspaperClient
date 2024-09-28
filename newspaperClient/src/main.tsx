@@ -14,6 +14,7 @@ import NewsCreateForm from './components/News/NewsCreateForm.tsx'
 import PrivateRoute from './components/PrivateRoute/PrivateRoute.tsx'
 import CreatedNews from './CreatedNews/CreatedNews.tsx'
 import Register from './components/Register/Register.tsx'
+import { ToastContainer } from 'react-toastify'
 
 const user=JSON.parse(localStorage.getItem("user")) ;
 
@@ -79,6 +80,7 @@ createRoot(document.getElementById('root')!).render(
     <UserContextProvider>
     <RouterProvider router={router}>
     </RouterProvider>
+     <ToastContainer></ToastContainer>
     </UserContextProvider>
   </StrictMode>,
 )

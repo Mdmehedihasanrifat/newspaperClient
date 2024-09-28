@@ -2,6 +2,7 @@
 import {  useNavigate, useLocation, useLoaderData } from "react-router-dom";
 import { getImageUrl } from "../utils/helper";
 import { useEffect, useState } from "react";
+import { FaEye } from 'react-icons/fa';
 // import userContext from "../context/UserContext";
 
 const CreatedNews = () => {
@@ -46,9 +47,19 @@ const CreatedNews = () => {
               alt={item.headline}
               className="w-full h-48 object-cover"
             />
+        
             <div className="p-4">
               <h2 className="text-xl font-semibold mb-2">{item.headline}</h2>
-              <p className="text-gray-600 text-sm">{item.details}</p>
+              <div className="flex items-center  mb-2 text-red-700">
+            <p className="text-xs text-gray-500">
+              {news.userId} {new Date(item.createdAt).toLocaleDateString()}
+            </p>
+            <span className="flex items-center mx-2"> {/* Add margin here */}
+              <FaEye className="text-gray-500" /> {/* Eye icon */}
+              <span className="text-xs text-gray-700 ml-1">{item.viewCount}</span> {/* View count */}
+            </span>
+            </div>
+              <p className="text-gray-600 text-sm line-clamp-4">{item.details}</p>
             </div>
           </div>
         ))}

@@ -29,6 +29,7 @@ const News = () => {
     const socket = io("http://localhost:3000");
 
     socket.on("news", (newsItem: NewsItem) => {
+      console.log(newsItem)
       setNews((prevNews) => [newsItem, ...prevNews]);
     });
 

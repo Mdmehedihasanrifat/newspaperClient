@@ -1,6 +1,7 @@
 import { ChangeEvent, useEffect, useCallback, useContext } from "react";
 import { Link } from "react-router-dom";
 import userContext from "../../context/UserContext";
+import { getImageUrl } from "../../utils/helper";
 
 interface SearchBarProps {
   searchQuery: string;
@@ -79,7 +80,7 @@ const SearchBar = ({
           {searchResults.slice(0, 6).map((result) => (
             <li key={result.id} className="flex items-center mb-2">
               <img
-                src={result.image}
+                src={getImageUrl(result.image)} 
                 alt={result.headline}
                 className="w-16 h-16 object-cover rounded-md mr-2"
               />
@@ -87,7 +88,7 @@ const SearchBar = ({
                 to={`/news/${result.id}`}
                 className="text-blue-500 hover:underline flex-1"
               >
-                {result.headline} 
+                {result.headline}
               </Link>
             </li>
           ))}
@@ -99,7 +100,7 @@ const SearchBar = ({
                   <li key={result.id} className="flex items-center mb-2">
                     <img
                       src={result.image}
-                      alt={result.title}
+                    
                       className="w-16 h-16 object-cover rounded-md mr-2"
                     />
                     <Link
@@ -107,6 +108,7 @@ const SearchBar = ({
                       className="text-blue-500 hover:underline flex-1"
                     >
                       {result.headline}
+                      
                     </Link>
                   </li>
                 ))}

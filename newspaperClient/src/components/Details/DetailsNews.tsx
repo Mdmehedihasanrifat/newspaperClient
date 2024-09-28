@@ -2,7 +2,7 @@ import React, { useCallback, useState, useContext, useEffect } from "react";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import { NewsDetails, Comment, User } from "../../utils/interface";
 import userContext from "../../context/UserContext";
-import { formattedDate, handleFetch } from "../../utils/helper";
+import { formattedDate, getImageUrl, handleFetch } from "../../utils/helper";
 import NewsImage from "./NewsImage";
 import CommentsSection from "./CommentSection";
 import { FaTrashAlt, FaEdit } from "react-icons/fa";
@@ -90,6 +90,10 @@ const DetailsNews: React.FC = () => {
     }
   }, [detailsNews]);
 
+  const handleReadMoreClick = (id:any) => {
+    navigate(`/news/${id}`);
+  };
+
   return (
     <div className="grid grid-cols-12 gap-6">
       {/* Main Content Section */}
@@ -146,31 +150,45 @@ const DetailsNews: React.FC = () => {
 
       {/* Related News Section */}
       <div className="col-span-4 mx-6">
-        <div className="bg-gray-100 p-4 border border-gray-300 rounded shadow">
-          <h2 className="text-lg font-bold">Related News</h2>
-          <ul className="mt-2">
-            {recommendations.length > 0 ? (
-              recommendations.map((single) => (
-                <li key={single.id} className="flex items-center mb-2">
-                  <img
-                    src={single.image}
-                    alt={single.headline}
-                    className="w-16 h-16 mr-2 object-cover rounded"
-                  />
-                  <div>
-                    <h3 className="text-md font-semibold">{single.headline}</h3>
-                    <p className="text-sm text-gray-500">
-                      {formattedDate(single.createdAt)}
-                    </p>
-                  </div>
-                </li>
-              ))
-            ) : (
-              <p className="text-gray-500">No related news available.</p>
-            )}
-          </ul>
-        </div>
-      </div>
+  <div className="bg-gray-100 p-4 border border-gray-300 rounded shadow">
+    <h2 className="text-lg font-bold">Related News</h2>
+    <ul className="mt-2">
+      {recommendations.length > 0 ? (
+        recommendations.map((single) => (
+          <li key={single.id} className="flex items-center mb-2 cursor-pointer" onClick={()=>{handleReadMoreClick(single.id)}}>
+            <img
+              src={getImageUrl(single.image)}
+              alt={single.headline}
+              className="w-16 h-16 mr-2 object-cover rounded"
+            />
+            <div>
+              <h3 className="text-md font-semibold">{single.headline}</h3>
+              {/* Flex container to align date and view icon */}
+              <div className="flex items-center text-sm text-gray-500">
+                <p>{formattedDate(single.createdAt)}</p>
+                {/* View icon and count */}
+                <div className="flex items-center ml-4">
+                  <svg
+                    className="w-4 h-4 mr-1 text-gray-500"
+                    fill="currentColor"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 4.5C7.30558 4.5 3.25457 7.19154 1.125 11.25C3.25457 15.3085 7.30558 18 12 18C16.6944 18 20.7454 15.3085 22.875 11.25C20.7454 7.19154 16.6944 4.5 12 4.5ZM12 15.75C9.51472 15.75 7.5 13.7353 7.5 11.25C7.5 8.76472 9.51472 6.75 12 6.75C14.4853 6.75 16.5 8.76472 16.5 11.25C16.5 13.7353 14.4853 15.75 12 15.75ZM12 9C10.7574 9 9.75 10.0074 9.75 11.25C9.75 12.4926 10.7574 13.5 12 13.5C13.2426 13.5 14.25 12.4926 14.25 11.25C14.25 10.0074 13.2426 9 12 9Z" />
+                  </svg>
+                  <span>{single.viewCount}</span>
+                </div>
+              </div>
+            </div>
+          </li>
+        ))
+      ) : (
+        <p className="text-gray-500">No related news available.</p>
+      )}
+    </ul>
+  </div>
+</div>
+
 
       <ConfirmDeleteModal
         isOpen={isDeleteModal}

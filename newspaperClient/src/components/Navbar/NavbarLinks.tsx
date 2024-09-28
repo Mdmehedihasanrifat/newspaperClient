@@ -1,38 +1,45 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
 const NavbarLinks = () => {
- 
+  const location = useLocation(); // Get the current location
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('More');
+  const [categories, setCategories] = useState([]);
+  const [activeLink, setActiveLink] = useState(''); // State for active link
 
-  // Show the first 10 links directly
-   const [categories,setCategories]=useState([])
-  
-useEffect(
-  ()=>{
+  // Fetch categories from the API
+  useEffect(() => {
     fetch("http://localhost:3000/api/categories")
-    .then(res=>res.json())
-    .then(data=>{ console.log(data)
-      setCategories(data)})
-   
-  
-  },
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        setCategories(data);
+      });
+  }, [setCategories]);
 
+  // Reset active link when on the homepage
+  useEffect(() => {
+    if (location.pathname === '/') {
+      setActiveLink(''); // Reset active link
+      setSelectedCategory('More'); // Reset selected category if desired
+    }
+  }, [location.pathname]); // Run effect on location change
 
-[]);
-
-const visibleLinks = categories.slice(0, 10);
- 
+  const visibleLinks = categories.slice(0, 10);
   const moreLinks = categories.slice(10);
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
-  const handleCategoryClick = (categories) => {
-    setSelectedCategory(categories.name); // Set selected category
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category.name); // Set selected category
+    setActiveLink(category.name); // Set active link
     setDropdownOpen(false); // Close dropdown after selection
+  };
+
+  const handleVisibleLinkClick = (category) => {
+    setActiveLink(category.name); // Set active link when clicking visible links
   };
 
   return (
@@ -42,7 +49,8 @@ const visibleLinks = categories.slice(0, 10);
         <Link
           key={category.id}
           to={`news?category=${category.name}`}
-          className="text-md mx-4 hover:text-orange-600"
+          className={`text-md mx-4 hover:text-orange-600 ${activeLink === category.name ? 'text-orange-600' : ''}`}
+          onClick={() => handleVisibleLinkClick(category)} // Set active link
         >
           {category.name}
         </Link>
@@ -73,7 +81,7 @@ const visibleLinks = categories.slice(0, 10);
                   key={category.id}
                   to={`news?category=${category.name}`}
                   onClick={() => handleCategoryClick(category)} // Handle click to select category
-                  className="block px-4 py-2 text-sm hover:bg-gray-200 hover:text-orange-600"
+                  className={`block px-4 py-2 text-sm hover:bg-gray-200 hover:text-orange-600 ${activeLink === category.name ? 'text-orange-600' : ''}`}
                 >
                   {category.name}
                 </Link>
