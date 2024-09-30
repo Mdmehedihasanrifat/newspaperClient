@@ -34,7 +34,7 @@ const SingleNews: React.FC<{ news: NewsItem; image: string; featured?: boolean; 
         />
       </div>
       <div className="pt-4">
-        <h1 className={`mb-2 ${featured ? "text-4xl" : mediumFeature ? "text-2xl" : "text-xl"} text-indigo-500`}>
+        <h1 className={`mb-2 ${featured ? "text-4xl" : mediumFeature ? "text-2xl" : "text-xl"} text-black`}>
           {news.headline}
         </h1>
         <div className="flex items-center mb-2 text-red-700">

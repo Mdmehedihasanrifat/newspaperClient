@@ -43,7 +43,7 @@ const NavbarLinks = () => {
   };
 
   return (
-    <div className="flex justify-center w-full">
+    <div className="flex justify-center w-full border-b-1 py-4  "> {/* Added border and shadow here */}
       {/* Render the first 10 links */}
       {visibleLinks.map((category) => (
         <Link
@@ -75,7 +75,7 @@ const NavbarLinks = () => {
 
           {/* Dropdown for more links */}
           {dropdownOpen && (
-            <div className="absolute mt-2 w-48 bg-white shadow-lg rounded-md z-50">
+            <div className="absolute mt-2 w-48 bg-white border shadow-lg rounded-md z-50">
               {moreLinks.map((category) => (
                 <Link
                   key={category.id}
