@@ -1,4 +1,4 @@
-import { useState, useEffect, } from "react";
+import { useState, useEffect } from "react";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ToastContainer, toast } from "react-toastify";
@@ -12,7 +12,7 @@ const NewsCreateForm = () => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories ] = useState([]); // Categories context
+  const [categories, setCategories] = useState([]); // Categories context
   const navigate = useNavigate();
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const detailNews = useLoaderData(); // Data from news details
@@ -23,9 +23,8 @@ const NewsCreateForm = () => {
       try {
         const response = await fetch("http://localhost:3000/api/categories"); // Adjust the URL
         const data = await response.json();
-        
-      // Log the data from the API
-        
+
+        // Log the data from the API
         if (response.ok) {
           setCategories(data); // Only set categories if the response is OK
         } else {
@@ -73,28 +72,33 @@ const NewsCreateForm = () => {
     }
   };
 
+  const removeImage = () => {
+    setImage(null);
+    setPreviewImage(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     // Frontend validation
     const formErrors: any = {};
     if (!title) formErrors.title = "Title is required";
     if (!description) formErrors.description = "Content is required";
     if (!image && !newsId) formErrors.image = "Image is required"; // Ensure image for creation
     setErrors(formErrors);
-  
+
     if (Object.keys(formErrors).length > 0) return;
-  
+
     // Create form data for submission
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
     formData.append("categoryIds", selectedCategories.join(",")); // Send category IDs as CSV
     if (image) formData.append("image", image as Blob); // Handle image upload only if an image is provided
-  
+
     try {
       const token = localStorage.getItem("token");
-  
+
       if (!token) {
         Swal.fire({
           icon: "warning",
@@ -103,15 +107,15 @@ const NewsCreateForm = () => {
         });
         return;
       }
-  
+
       setLoading(true); // Start loading state
-  
+
       // Decide the method and URL based on whether we are creating or updating
       const method = newsId ? "PUT" : "POST";
       const url = newsId
         ? `http://localhost:3000/api/news/${newsId}` // Update an existing news
         : "http://localhost:3000/api/news"; // Create a new news
-  
+
       const response = await fetch(url, {
         method, // Use POST for creating and PUT for updating
         body: formData,
@@ -119,14 +123,14 @@ const NewsCreateForm = () => {
           Authorization: `${token}`,
         },
       });
-  
+
       const result = await response.json();
       if (response.ok) {
         setTitle("");
         setDescription("");
         setSelectedCategories([]);
         setImage(null);
-  
+
         // Show success SweetAlert
         Swal.fire({
           icon: "success",
@@ -134,7 +138,7 @@ const NewsCreateForm = () => {
           text: newsId ? "News updated successfully!" : "News created successfully!",
         });
 
-        toast(newsId? "News updated successfully!" : "News created successfully!")
+        toast(newsId ? "News updated successfully!" : "News created successfully!");
         navigate("/"); // Redirect after creating or updating
       } else {
         // Show error SweetAlert
@@ -155,11 +159,10 @@ const NewsCreateForm = () => {
       setLoading(false); // End loading state
     }
   };
-  
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-6 px-4 lg:px-8">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
+      <div className="max-w-lg w-full bg-white p-8 rounded-lg shadow-lg">
         <h1 className="text-3xl font-semibold text-center text-gray-800 mb-6">
           {newsId ? "Update News Article" : "Create News Article"}
         </h1>
@@ -228,35 +231,40 @@ const NewsCreateForm = () => {
             <label htmlFor="image" className="block text-sm font-medium text-gray-700">
               Upload Image
             </label>
-            <input
-              type="file"
-              id="image"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-300 focus:ring-opacity-50"
-              accept="image/*"
-              onChange={handleImageChange}
-            />
-            {errors.image && <p className="text-red-500 text-sm">{errors.image}</p>}
-            {previewImage && (
-              <div className="mt-4">
-                <img src={previewImage} alt="Preview" className="max-w-full h-auto" />
+            {!image ? (
+              <input
+                type="file"
+                id="image"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-300 focus:ring-opacity-50"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+            ) : (
+              <div className="relative">
+                <img src={previewImage} alt="Preview" className="mb-2 w-full h-auto rounded-lg" />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute top-0 right-0 bg-black text-white rounded-full p-1"
+                >
+                  X
+                </button>
               </div>
             )}
+            {errors.image && <p className="text-red-500 text-sm">{errors.image}</p>}
           </div>
 
           {/* Submit Button */}
-          <div>
-            <button
-              type="submit"
-              className={`w-full px-4 py-2 font-semibold text-white bg-indigo-600 rounded-lg shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 ${
-                loading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              disabled={loading}
-            >
-              {loading ? "Submitting..." : newsId ? "Update News" : "Submit News"}
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="w-full bg-black text-white py-2 rounded-lg hover:bg-indigo-700 transition duration-200"
+            disabled={loading}
+          >
+            {loading ? "Saving..." : newsId ? "Update News" : "Create News"}
+          </button>
         </form>
       </div>
+      <ToastContainer />
     </div>
   );
 };
